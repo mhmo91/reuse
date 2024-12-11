@@ -1,4 +1,5 @@
 import { auth } from '@db/firebase'
+import { FoldersDB } from '@db/folders.collection'
 import { User, UsersDB } from '@db/users.collection'
 import { $LitElement } from '@mhmo91/lit-mixins/src'
 import { area, fullHeight } from '@mhmo91/schmancy'
@@ -7,10 +8,9 @@ import { customElement, state } from 'lit/decorators.js'
 import { map, of, switchMap, take, tap, zip } from 'rxjs'
 import { $user } from 'src/context'
 import Login from 'src/public/login/login'
-import Users from './users/users'
-import Items from './items/items'
 import { $folders } from './folders/context'
-import { FoldersDB } from '@db/folders.collection'
+import Items from './items/items'
+import Users from './users/users'
 
 @customElement(`momo-admin`)
 export default class Admin extends $LitElement() {
@@ -123,7 +123,7 @@ export default class Admin extends $LitElement() {
 						<schmancy-nav-drawer-appbar .hidden=${auth.currentUser?.email === 'scan@funkhaus-berlin.net'} class="py-2">
 							<!-- <schmancy-typography type="display">Schmancy Demo</schmancy-typography> -->
 						</schmancy-nav-drawer-appbar>
-						<schmancy-area name="admin" .default=${Users}></schmancy-area>
+						<schmancy-area name="admin" .default=${Items}></schmancy-area>
 					</schmancy-nav-drawer-content>
 				</schmancy-nav-drawer>
 			</schmancy-surface>

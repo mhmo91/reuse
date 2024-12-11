@@ -131,30 +131,20 @@ export default class Items extends $LitElement() {
 				${when(
 					this.items.size > 0,
 					() => html`
-						<schmancy-surface class="h-full" fill type="surfaceBright" rounded="all" elevation="2">
-							<schmancy-grid class="h-full" rows="auto 1fr">
-								<schmancy-surface rounded="top" elevation="1" type="containerHighest" class="sticky top-0 z-10">
-									<schmancy-grid class="px-[16px] py-2" align="center" justify="start" gap="sm" cols="${cols}">
-										<span></span>
-										<schmancy-typography align="left" type="label" token="lg"> Name </schmancy-typography>
-
-										<span></span>
-									</schmancy-grid>
-								</schmancy-surface>
-								<lit-virtualizer
-									scroller
-									.items=${Array.from(this.items.values())}
-									.renderItem=${(item: Item) => {
-										return html`
-											<reuse-product
-												@click=${() => sheet.open({ component: new ItemForm(item) })}
-												.item=${item}
-											></reuse-product>
-										` as TemplateResult
-									}}
-								></lit-virtualizer>
-							</schmancy-grid>
-						</schmancy-surface>
+						<schmancy-grid class="h-full" rows="auto 1fr">
+							<lit-virtualizer
+								scroller
+								.items=${Array.from(this.items.values())}
+								.renderItem=${(item: Item) => {
+									return html`
+										<reuse-product
+											@click=${() => sheet.open({ component: new ItemForm(item) })}
+											.item=${item}
+										></reuse-product>
+									` as TemplateResult
+								}}
+							></lit-virtualizer>
+						</schmancy-grid>
 					`,
 					() => html`<schmancy-typography>No items found.</schmancy-typography>`,
 				)}

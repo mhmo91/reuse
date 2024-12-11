@@ -1,6 +1,6 @@
-import { TUser } from '@db/users/user.interface'
+import { User } from '@db/users.collection'
 import { $user } from 'src/context'
-export default async function upsertUser(body: TUser): Promise<any> {
+export default async function upsertUser(body: User): Promise<any> {
 	const token = await $user.value?.accessToken
 	console.log('token', token)
 	const response = await fetch(
