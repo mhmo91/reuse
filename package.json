@@ -1,0 +1,40 @@
+{
+	"name": "mo-template",
+	"private": true,
+	"version": "0.0.13",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@lit-labs/virtualizer": "^2.0.14",
+		"@mhmo91/lit-mixins": "^0.3.14",
+		"@mhmo91/schmancy": "^0.0.275",
+		"@netlify/functions": "^2.8.2",
+		"@reduxjs/toolkit": "^2.4.0",
+		"@supabase/supabase-js": "^2.46.2",
+		"cleave.js": "^1.6.0",
+		"firebase": "^11.0.2",
+		"firebase-admin": "^13.0.1",
+		"lit": "^3.2.1",
+		"moment": "^2.30.1",
+		"redux-persist": "^6.0.0",
+		"rxjs": "^7.8.1",
+		"ts-lit-plugin": "^2.0.2",
+		"type-fest": "^4.30.0",
+		"uuid": "^11.0.3",
+		"vite-plugin-sitemap": "^0.7.1",
+		"vite-plugin-webfont-dl": "^3.10.2"
+	},
+	"devDependencies": {
+		"autoprefixer": "^10.4.20",
+		"postcss": "^8.4.49",
+		"sass": "^1.82.0",
+		"tailwindcss": "^3.4.16",
+		"typescript": "^5.7.2",
+		"vite": "^6.0.2",
+		"vite-plugin-pwa": "^0.21.1"
+	}
+}

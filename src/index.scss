@@ -1,0 +1,31 @@
+:root {
+	font-family: 'Josefin Sans', sans-serif;
+	--md-ref-typeface-brand: 'Josefin Sans', sans-serif;
+	--md-ref-typeface-plain: 'Josefin Sans', sans-serif;
+	--md-sys-color-primary: var(--schmancy-sys-color-primary-default);
+	--md-sys-color-secondary: var(--schmancy-sys-color-secondary-default);
+
+	font-weight: 400;
+
+	color-scheme: light dark;
+	color: rgba(255, 255, 255, 0.87);
+	background-color: var(--schmancy-sys-color-surface-container);
+
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	--schmancy-font-family: 'Josefin Sans', sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		color: #213547;
+	}
+}

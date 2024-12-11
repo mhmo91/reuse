@@ -1,0 +1,37 @@
+{
+	"compilerOptions": {
+		"target": "ES2020",
+		"experimentalDecorators": true,
+		"useDefineForClassFields": false,
+		"module": "ESNext",
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"skipLibCheck": true,
+
+		/* Bundler mode */
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"isolatedModules": false,
+		"noEmit": true,
+
+		/* Linting */
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"plugins": [
+			{
+				"name": "ts-lit-plugin",
+				"strict": true,
+				"rules": {
+					"no-missing-import": "off"
+				}
+			}
+		],
+		"paths": {
+			"@db/*": ["db/*"]
+		},
+		"baseUrl": "."
+	},
+	"include": ["src", "app.settings.ts"]
+}
