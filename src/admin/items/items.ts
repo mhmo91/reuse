@@ -3,11 +3,10 @@ import { FoldersTree, IFolder, TreeNode } from '@db/folders.collection'
 import { Item } from '@db/items.collection'
 import { $LitElement } from '@mhmo91/lit-mixins/src'
 import { fullHeight, sheet } from '@mhmo91/schmancy'
-import { html, TemplateResult } from 'lit'
+import { html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { map as litMap } from 'lit/directives/map.js'
 import { repeat } from 'lit/directives/repeat.js'
-import { when } from 'lit/directives/when.js'
 import { debounceTime, distinctUntilChanged, merge, takeUntil } from 'rxjs'
 import '../folders'
 import { $folders } from '../folders/context'
@@ -99,7 +98,7 @@ export default class Items extends $LitElement() {
 					</schmancy-grid>
 				</schmancy-nav-drawer-appbar>
 
-				<schmancy-flex class="max-h-[15vh] overflow-scroll py-2" gap="sm">
+				<schmancy-flex class=" overflow-scroll py-2" gap="sm">
 					<schmancy-grid gap="sm" class="max-h-[20vh] overflow-y-scroll">
 						<!-- repeat all chips if any category is selected -->
 						${litMap(
@@ -128,26 +127,14 @@ export default class Items extends $LitElement() {
 				</schmancy-flex>
 
 				<!-- list of items -->
-				${when(
-					this.items.size > 0,
-					() => html`
-						<schmancy-grid class="h-full" rows="auto 1fr">
-							<lit-virtualizer
-								scroller
-								.items=${Array.from(this.items.values())}
-								.renderItem=${(item: Item) => {
-									return html`
-										<reuse-product
-											@click=${() => sheet.open({ component: new ItemForm(item) })}
-											.item=${item}
-										></reuse-product>
-									` as TemplateResult
-								}}
-							></lit-virtualizer>
-						</schmancy-grid>
-					`,
-					() => html`<schmancy-typography>No items found.</schmancy-typography>`,
-				)}
+				<schmancy-grid gap="lg">
+					${repeat(
+						$items.value,
+						i => i[1].id,
+						i => html` <reuse-product .item=${i[1]}></reuse-product> `,
+					)}
+					<reuse-product></reuse-product>
+				</schmancy-grid>
 			</schmancy-grid>
 		`
 	}
