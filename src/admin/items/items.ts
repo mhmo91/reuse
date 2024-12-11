@@ -70,9 +70,6 @@ export default class Items extends $LitElement() {
 	}
 
 	render() {
-		console.count()
-		const cols = '4rem 2fr auto'
-
 		return html`
 			<schmancy-grid ${fullHeight()} class="pt-5 pb-2" rows="auto auto 1fr" flow="row" gap="sm">
 				<schmancy-nav-drawer-appbar>
