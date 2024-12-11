@@ -29,7 +29,7 @@ export default class AppLanding extends $LitElement() {
 						</schmancy-animated-text>
 					</schmancy-typography>
 				</schmancy-grid>
-				<schmancy-grid gap="lg">
+				<schmancy-grid class="max-w-md mx-auto" gap="lg">
 					${repeat(
 						$items.value,
 						i => i[1].id,

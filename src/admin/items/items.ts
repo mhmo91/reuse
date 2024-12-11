@@ -124,11 +124,16 @@ export default class Items extends $LitElement() {
 				</schmancy-flex>
 
 				<!-- list of items -->
-				<schmancy-grid gap="lg">
+				<schmancy-grid class="max-w-md mx-auto" gap="lg">
 					${repeat(
 						$items.value,
 						i => i[1].id,
-						i => html` <reuse-product .item=${i[1]}></reuse-product> `,
+						i => html`
+							<reuse-product
+								@click=${() => sheet.open({ component: new ItemForm(i[1]) })}
+								.item=${i[1]}
+							></reuse-product>
+						`,
 					)}
 					<reuse-product></reuse-product>
 				</schmancy-grid>
