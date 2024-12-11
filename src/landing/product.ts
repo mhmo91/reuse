@@ -42,13 +42,13 @@ export class ReuseProduct extends $LitElement(css`
 							</div>
 						</div>
 						<schmancy-grid class="py-2 px-2" align="center" justify="center" cols="auto auto 1fr auto" gap="md">
-							<schmancy-typography type="title"> Nike </schmancy-typography>
+							<schmancy-typography type="title"> ${this.item.brand} </schmancy-typography>
 							<schmancy-grid flow="col" gap="sm">
 								<schmancy-icon>straighten</schmancy-icon>
-								<schmancy-typography type="title"> 48 </schmancy-typography>
+								<schmancy-typography type="title">${this.item.size} </schmancy-typography>
 							</schmancy-grid>
 							<span></span>
-							<p class="mt-1 text-lg font-medium text-gray-900">$48</p>
+							<p class="mt-1 text-lg font-medium text-gray-900">${this.item.price} EGP</p>
 						</schmancy-grid>
 					</div>
 				</div>
