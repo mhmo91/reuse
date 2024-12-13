@@ -103,6 +103,7 @@ export class ReuseProduct extends $LitElement(css`
 					<span></span>
 
 					<schmancy-typography type="title">${this.item?.price} EGP</schmancy-typography>
+					<schmancy-typography class="col col-span-4"> ${this.item?.description} </schmancy-typography>
 				</schmancy-grid>
 			</schmancy-surface>
 		`

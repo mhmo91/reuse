@@ -99,11 +99,11 @@ export default class Admin extends $LitElement() {
 							<!-- <schmancy-list-item
 								.selected=${this.activeTab === 'momousers'}
 								@click=${() => {
-								area.push({
-									component: Users,
-									area: 'admin',
-								})
-							}}
+									area.push({
+										component: Users,
+										area: 'admin',
+									})
+								}}
 								rounded
 								variant="container"
 							>
@@ -126,8 +126,6 @@ export default class Admin extends $LitElement() {
 						</schmancy-list>
 					</schmancy-nav-drawer-navbar>
 					<schmancy-nav-drawer-content class="rounded-lg px-4 sm:px-6 md:px-8">
-						<schmancy-nav-drawer-appbar .hidden=${auth.currentUser?.email === 'scan@funkhaus-berlin.net'} class="py-2">
-							<!-- <schmancy-typography type="display">Schmancy Demo</schmancy-typography> -->
 						</schmancy-nav-drawer-appbar>
 						<schmancy-area name="admin" .default=${Items}></schmancy-area>
 					</schmancy-nav-drawer-content>
