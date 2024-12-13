@@ -8,7 +8,7 @@
  *                  A lower number means higher compression (smaller file size) but lower image quality.
  * @returns A Promise that resolves to either a Blob, DataURL, or File representing the resized (or non-resized) image.
  */
-export function resizeImage<T>(
+export function resizeImage(
 	imageFile: File,
 	maxWidth?: number,
 	maxHeight?: number,
