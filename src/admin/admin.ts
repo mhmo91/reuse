@@ -5,7 +5,7 @@ import { $LitElement } from '@mhmo91/lit-mixins/src'
 import { area, fullHeight } from '@mhmo91/schmancy'
 import { html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
-import { map, of, switchMap, take, tap, zip } from 'rxjs'
+import { map, of, switchMap, take, takeUntil, tap, zip } from 'rxjs'
 import { $user } from 'src/context'
 import Login from 'src/public/login/login'
 import { $folders } from './folders/context'
@@ -19,9 +19,15 @@ export default class Admin extends $LitElement() {
 	connectedCallback(): void {
 		super.connectedCallback()
 
-		area.$current.pipe(map(r => r.get('admin')!)).subscribe(r => {
-			this.activeTab = r.component.replace(/-/g, '').toLowerCase()
-		})
+		area.$current
+			.pipe(
+				map(r => r.get('admin')),
+				takeUntil(this.disconnecting),
+			)
+			.subscribe(r => {
+				if (!r) return
+				this.activeTab = r.component.replace(/-/g, '').toLowerCase()
+			})
 
 		zip(
 			$folders.pipe(

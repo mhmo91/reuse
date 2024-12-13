@@ -1,11 +1,15 @@
 import { Item } from '@db/items.collection'
 import { $LitElement } from '@mhmo91/lit-mixins/src'
+import { SchmancyTheme } from '@mhmo91/schmancy'
 import { css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, query, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 
 @customElement('reuse-product')
 export class ReuseProduct extends $LitElement(css`
+	:host {
+		max-width: max(100vw, 380px);
+	}
 	.scrollbar-hide::-webkit-scrollbar {
 		display: none;
 	}
@@ -15,44 +19,91 @@ export class ReuseProduct extends $LitElement(css`
 	}
 `) {
 	@property({ type: Object }) item!: Item
+	@state() private selectedIndex: number = 0
+
+	// Querying the carousel container and items
+	@query('#carousel') private carousel!: HTMLDivElement
+
+	private observer!: IntersectionObserver
+
+	private createObserver() {
+		const options = {
+			root: this.carousel,
+			threshold: 0.5, // Trigger when 50% of the element is visible
+		}
+
+		this.observer = new IntersectionObserver(entries => {
+			console.log(entries)
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					// Get the index of the visible carousel item
+					const index = Array.from(this.carousel.querySelectorAll('.carousel-item')).indexOf(entry.target as Element)
+					this.selectedIndex = index
+				}
+			})
+		}, options)
+
+		// Observe each carousel item
+		this.carousel.querySelectorAll('.carousel-item').forEach(item => {
+			this.observer.observe(item)
+		})
+	}
+
+	protected firstUpdated() {
+		this.createObserver()
+	}
+
+	disconnectedCallback() {
+		super.disconnectedCallback()
+		if (this.observer) {
+			this.observer.disconnect()
+		}
+	}
+
 	protected render(): unknown {
 		return html`
 			<schmancy-surface type="containerLow">
-				<div class="mx-auto max-w-2xl">
-					<div class="grid grid-cols-1 gap-x-6 gap-y-2">
-						<div
-							class="relative w-full flex gap-0 snap-x snap-mandatory overflow-x-auto  scroll-smooth scrollbar-hide"
-							id="carousel"
-						>
-							${repeat(
-								this.item.images,
-								i => i,
-								i => html` <div class="snap-always snap-center shrink-0 first:pl-0 last:pr-0">
-									<img
-										src="${i}"
-										alt="Olive drab green insulated bottle with flared screw lid and flat top."
-										class="h-[60vh] max-w-[100vw] aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75 xl:aspect-[7/8]"
-									/>
-								</div>`,
-							)}
-
-							<!-- Spacer at end -->
-							<div class="snap-center shrink-0">
-								<div class="shrink-0 w-4 sm:w-48"></div>
-							</div>
-						</div>
-						<schmancy-grid class="py-2 px-2" align="center" justify="center" cols="auto auto 1fr auto" gap="md">
-							<schmancy-typography type="title"> ${this.item.brand} </schmancy-typography>
-							<schmancy-grid flow="col" gap="sm">
-								<schmancy-icon>straighten</schmancy-icon>
-								<schmancy-typography type="title">${this.item.size} </schmancy-typography>
-							</schmancy-grid>
-							<span></span>
-
-							<schmancy-typography type="title">${this.item.price} EGP</schmancy-typography>
-						</schmancy-grid>
+				<div class="relative inset-0">
+					<div
+						class="rounded-t-md h-[60vh] relative w-full flex gap-0 snap-x snap-mandatory overflow-x-auto scroll-smooth scrollbar-hide"
+						id="carousel"
+					>
+						${repeat(
+							this.item?.images ?? [],
+							i => i,
+							i => html`
+								<div class="carousel-item snap-always snap-center shrink-0 first:pl-0 last:pr-0">
+									<img src="${i}" alt="Product image" class="aspect-[2/3] h-full w-auto object-cover" />
+								</div>
+							`,
+						)}
+					</div>
+					<div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+						${repeat(
+							this.item?.images ?? [],
+							(_, index) => index,
+							(_, index) => html`
+								<div
+									class="w-3 h-3 rounded-full "
+									style="background:${index === this.selectedIndex
+										? SchmancyTheme.sys.color.primary.default
+										: SchmancyTheme.sys.color.surface.default}"
+								></div>
+							`,
+						)}
 					</div>
 				</div>
+
+				<schmancy-grid class="py-3 px-2" align="center" justify="center" cols="auto auto 1fr auto" gap="md">
+					<schmancy-typography type="title"> ${this.item?.brand} </schmancy-typography>
+					<schmancy-grid flow="col" gap="sm">
+						<schmancy-icon>straighten</schmancy-icon>
+						<schmancy-typography type="title">${this.item?.size} </schmancy-typography>
+					</schmancy-grid>
+					<span></span>
+
+					<schmancy-typography type="title">${this.item?.price} EGP</schmancy-typography>
+				</schmancy-grid>
 			</schmancy-surface>
 		`
 	}

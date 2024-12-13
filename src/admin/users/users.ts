@@ -1,13 +1,13 @@
+import { TUser, UsersDB } from '@db/users.collection'
 import { $LitElement } from '@mhmo91/lit-mixins/src'
 import { SchmancySheetPosition, sheet } from '@mhmo91/schmancy'
 import { html, TemplateResult } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import { switchMap } from 'rxjs'
+import { $user } from 'src/context'
 import { $usersFilter } from './context'
 import UserForm from './user-form'
-import { $user } from 'src/context'
-import { TUser, UsersDB } from '@db/users.collection'
 
 @customElement('momo-users')
 export default class Users extends $LitElement() {

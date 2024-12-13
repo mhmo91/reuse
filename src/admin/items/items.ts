@@ -95,33 +95,31 @@ export default class Items extends $LitElement() {
 					</schmancy-grid>
 				</schmancy-nav-drawer-appbar>
 
-				<schmancy-flex class=" overflow-scroll py-2" gap="sm">
-					<schmancy-grid gap="sm" class="max-h-[20vh] overflow-y-scroll">
-						<!-- repeat all chips if any category is selected -->
-						${litMap(
-							FoldersTree.getFolderPath(this.foldersTree, $itemsFilter.value.filter.get('folder') ?? null),
-							i => html`
-								<schmancy-chips @change=${this.handleFolderChange} .value=${i ?? ''}>
-									${repeat(
-										(i === null
-											? this.foldersTree
-											: FoldersTree.getSubTreeByFolderId(this.foldersTree, i)?.children ?? []
-										).filter(
-											folder =>
-												folder.children.length > 0 ||
-												// filter out folders that have no items
-												Array.from($items.value.values()).some(item => item.folder === folder.data.id),
-										),
-										folder => folder.data.id,
-										folder => html`
-											<schmancy-chip label=${folder.data.name} value=${folder.data.id} selected> </schmancy-chip>
-										`,
-									)}
-								</schmancy-chips>
-							`,
-						)}
-					</schmancy-grid>
-				</schmancy-flex>
+				<schmancy-grid gap="sm" class="max-h-[20vh] overflow-y-scroll">
+					<!-- repeat all chips if any category is selected -->
+					${litMap(
+						FoldersTree.getFolderPath(this.foldersTree, $itemsFilter.value.filter.get('folder') ?? null),
+						i => html`
+							<schmancy-chips @change=${this.handleFolderChange} .value=${i ?? ''}>
+								${repeat(
+									(i === null
+										? this.foldersTree
+										: FoldersTree.getSubTreeByFolderId(this.foldersTree, i)?.children ?? []
+									).filter(
+										folder =>
+											folder.children.length > 0 ||
+											// filter out folders that have no items
+											Array.from($items.value.values()).some(item => item.folder === folder.data.id),
+									),
+									folder => folder.data.id,
+									folder => html`
+										<schmancy-chip label=${folder.data.name} value=${folder.data.id} selected> </schmancy-chip>
+									`,
+								)}
+							</schmancy-chips>
+						`,
+					)}
+				</schmancy-grid>
 
 				<!-- list of items -->
 				<schmancy-grid class="max-w-md mx-auto" gap="lg">

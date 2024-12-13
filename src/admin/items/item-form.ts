@@ -4,12 +4,13 @@ import { $notify, schmancyCheckBoxChangeEvent, SchmancyInputChangeEvent, sheet }
 import { html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
-import { firstValueFrom } from 'rxjs'
+import { firstValueFrom, switchMap } from 'rxjs'
 
 // Import Firebase Storage functions
 import { storage } from '@db/firebase'
 import { deleteObject, getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage'
-import { $items } from './context'
+import { $items } from 'src/admin/items/context'
+import { resizeImage } from 'src/shared/utils/image.utils'
 
 @customElement('item-form')
 export default class ItemForm extends $LitElement() {
@@ -53,16 +54,23 @@ export default class ItemForm extends $LitElement() {
 		fileInput.onchange = async (event: Event) => {
 			const target = event.target as HTMLInputElement
 			const files = target.files
+			// resize files before uploading
 
 			if (files && files.length > 0) {
 				this.uploading = true
 				this.uploadProgress = 0
+				// Resize all files and collect the resized files
+				const resizedFilesPromises: Promise<File>[] = Array.from(files).map(
+					file => resizeImage(file, 750, undefined, 'file', 0.8) as Promise<File>, // Type assertion if necessary
+				)
 
-				const totalBytes = Array.from(files).reduce((sum, file) => sum + file.size, 0)
+				const resizedFiles: File[] = await Promise.all(resizedFilesPromises)
+
+				const totalBytes = Array.from(resizedFiles).reduce((sum, file) => sum + file.size, 0)
 				let bytesTransferredSoFar = 0
 				const downloadURLs: string[] = []
 
-				const uploadPromises = Array.from(files).map(file => {
+				const uploadPromises = Array.from(resizedFiles).map(file => {
 					let previousBytesTransferredForFile = 0 // Track progress per file
 					return new Promise<void>((resolve, reject) => {
 						const storagePath = `items/${this.item.id}/${file.name}`
@@ -206,7 +214,71 @@ export default class ItemForm extends $LitElement() {
 						? html`
 								<div class="flex flex-wrap gap-2">
 									${this.item.images.map(
-										imgUrl => html`<img src="${imgUrl}" alt="Item Photo" class="max-w-52 h-auto" />`,
+										imgUrl => html`
+											<schmancy-surface type="surface" elevation="2">
+												<schmancy-grid class="relative w-fit">
+													<img src="${imgUrl}" alt="Item Photo" class="max-w-52 h-auto" />
+													<schmancy-grid class="p-2" gap="md" flow="col">
+														<schmancy-icon-button
+															variant="filled"
+															@click=${() => {
+																// reorder the images array and update the item
+																const index = this.item.images?.indexOf(imgUrl)
+																if (index !== undefined && index !== -1) {
+																	this.item.images?.splice(index, 1)
+																	this.item.images?.unshift(imgUrl)
+																	this.requestUpdate()
+																}
+																// update db
+																ItemsDB.upsert(this.item, this.item.id)
+																	.pipe(
+																		switchMap(() => {
+																			// update the item
+																			return ItemsDB.upsert(this.item, this.item.id)
+																		}),
+																	)
+																	.subscribe({
+																		next: () => {
+																			$notify.success('Image moved to the front successfully.')
+																			$items.next(new Map($items.value.set(this.item.id, this.item)))
+																		},
+																	})
+															}}
+														>
+															star
+														</schmancy-icon-button>
+														<schmancy-icon-button
+															@click=${() => {
+																// delete the image from the DB and firebase storage and update the item
+																const index = this.item.images?.indexOf(imgUrl)
+																if (index !== undefined && index !== -1) {
+																	this.item.images?.splice(index, 1)
+																	this.requestUpdate()
+																}
+																// update db
+																ItemsDB.upsert(this.item, this.item.id)
+																	.pipe(
+																		switchMap(() => {
+																			// delete the image from the storage
+																			const storageRef = ref(storage, `items/${this.item.id}/${imgUrl}`)
+																			return deleteObject(storageRef)
+																		}),
+																	)
+																	.subscribe({
+																		next: () => {
+																			$notify.success('Image deleted successfully.')
+																			$items.next(new Map($items.value.set(this.item.id, this.item)))
+																		},
+																	})
+															}}
+															variant="filled"
+														>
+															delete
+														</schmancy-icon-button>
+													</schmancy-grid>
+												</schmancy-grid>
+											</schmancy-surface>
+										`,
 									)}
 								</div>
 						  `
