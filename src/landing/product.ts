@@ -94,7 +94,7 @@ export class ReuseProduct extends $LitElement(css`
 					</div>
 				</div>
 
-				<schmancy-grid class="py-3 px-2" align="center" justify="center" cols="auto auto 1fr auto" gap="md">
+				<schmancy-grid class="py-3 px-2" align="center" cols="auto auto 1fr auto" gap="sm">
 					<schmancy-typography type="title"> ${this.item?.brand} </schmancy-typography>
 					<schmancy-grid flow="col" gap="sm">
 						<schmancy-icon>straighten</schmancy-icon>
@@ -103,7 +103,9 @@ export class ReuseProduct extends $LitElement(css`
 					<span></span>
 
 					<schmancy-typography type="title">${this.item?.price} EGP</schmancy-typography>
-					<schmancy-typography class="col col-span-4"> ${this.item?.description} </schmancy-typography>
+					<schmancy-typography class="col col-span-4 " align="left" type="body">
+						${this.item?.description}
+					</schmancy-typography>
 				</schmancy-grid>
 			</schmancy-surface>
 		`
