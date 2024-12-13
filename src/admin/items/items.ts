@@ -133,7 +133,6 @@ export default class Items extends $LitElement() {
 							></reuse-product>
 						`,
 					)}
-					<reuse-product></reuse-product>
 				</schmancy-grid>
 			</schmancy-grid>
 		`
