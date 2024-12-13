@@ -48,7 +48,8 @@ export class ReuseProduct extends $LitElement(css`
 								<schmancy-typography type="title">${this.item.size} </schmancy-typography>
 							</schmancy-grid>
 							<span></span>
-							<p class="mt-1 text-lg font-medium text-gray-900">${this.item.price} EGP</p>
+
+							<schmancy-typography type="title">${this.item.price} EGP</schmancy-typography>
 						</schmancy-grid>
 					</div>
 				</div>
