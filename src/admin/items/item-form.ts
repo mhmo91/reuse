@@ -190,6 +190,7 @@ export default class ItemForm extends $LitElement() {
 
 		try {
 			await firstValueFrom(ItemsDB.upsert(this.item, this.item.id))
+			console.log('Image deleted from item:', imgUrl)
 			const imgRef = ref(storage, `items/${this.item.id}/${imgUrl}`)
 			await deleteObject(imgRef)
 			$items.next(new Map($items.value.set(this.item.id, this.item)))

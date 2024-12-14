@@ -1,12 +1,10 @@
 import { auth } from '@db/firebase'
 import { FoldersDB } from '@db/folders.collection'
-import { User, UsersDB } from '@db/users.collection'
 import { $LitElement } from '@mhmo91/lit-mixins/src'
 import { area, fullHeight } from '@mhmo91/schmancy'
 import { html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { map, of, switchMap, take, takeUntil, tap, zip } from 'rxjs'
-import { $user } from 'src/context'
 import Login from 'src/public/login/login'
 import { $folders } from './folders/context'
 import Items from './items/items'
@@ -62,14 +60,6 @@ export default class Admin extends $LitElement() {
 					area: 'root',
 				})
 			} else {
-				user &&
-					UsersDB.get(user?.uid as string).subscribe({
-						next: u => {
-							$user.next(Object.assign(user, u))
-						},
-					})
-				$user.next(Object.assign(user, new User()))
-
 				area.push({
 					component: Admin,
 					area: 'root',
