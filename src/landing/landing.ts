@@ -35,7 +35,6 @@ export default class AppLanding extends $LitElement() {
 						i => i[1].id,
 						i => html` <reuse-product .item=${i[1]}></reuse-product> `,
 					)}
-					<reuse-product></reuse-product>
 				</schmancy-grid>
 			</schmancy-surface>
 		`
