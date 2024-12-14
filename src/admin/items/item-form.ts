@@ -191,7 +191,7 @@ export default class ItemForm extends $LitElement() {
 		try {
 			await firstValueFrom(ItemsDB.upsert(this.item, this.item.id))
 			console.log('Image deleted from item:', imgUrl)
-			const imgRef = ref(storage, `items/${this.item.id}/${imgUrl}`)
+			const imgRef = ref(storage, `items/${this.item.id}/${this.extractFileName(imgUrl)}`)
 			await deleteObject(imgRef)
 			$items.next(new Map($items.value.set(this.item.id, this.item)))
 			$notify.success('Image deleted successfully.')
@@ -247,6 +247,25 @@ export default class ItemForm extends $LitElement() {
 		const updatedMap = new Map($items.value)
 		updatedMap.delete(this.item.id)
 		$items.next(updatedMap)
+	}
+
+	private extractFileName(url: string): string {
+		// Split the URL at '?' to remove query parameters
+		const [pathWithoutQuery] = url.split('?')
+
+		// Decode the path to handle any encoded characters
+		const decodedPath = decodeURIComponent(pathWithoutQuery)
+
+		// Find the position of the last '/'
+		const lastSlashIndex = decodedPath.lastIndexOf('/')
+
+		if (lastSlashIndex === -1) {
+			// If no slash is found, return the entire decoded path
+			return decodedPath
+		}
+
+		// Extract everything after the last '/'
+		return decodedPath.slice(lastSlashIndex + 1)
 	}
 
 	protected render(): unknown {
