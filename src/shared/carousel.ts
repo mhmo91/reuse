@@ -3,6 +3,9 @@ import { SchmancyTheme } from '@mhmo91/schmancy'
 import { css, html } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
+// RxJS imports
+import { fromEvent } from 'rxjs'
+import { throttleTime } from 'rxjs/operators'
 
 @customElement('schmancy-carousel')
 export default class SchmancyCarouselComponent extends $LitElement(
@@ -20,46 +23,52 @@ export default class SchmancyCarouselComponent extends $LitElement(
 
 	@state() private selectedIndex: number = 0
 
-	// Querying the carousel container and items
 	@query('#carousel') private carousel!: HTMLDivElement
 
-	private observer!: IntersectionObserver
-
-	private createObserver() {
-		const options = {
-			root: null,
-			threshold: 0.8, // Trigger when 50% of the element is visible
-		}
-
-		this.observer = new IntersectionObserver(entries => {
-			console.log(entries)
-			entries.forEach(entry => {
-				if (entry.isIntersecting) {
-					// Get the index of the visible carousel item
-					const index = Array.from(this.carousel.querySelectorAll('.carousel-item')).indexOf(entry.target as Element)
-					this.selectedIndex = index
-					console.log('Index:', index)
-				}
-			})
-		}, options)
-
-		// Observe each carousel item
-		this.carousel.querySelectorAll('.carousel-item').forEach(item => {
-			this.observer.observe(item)
-		})
-	}
-
 	protected firstUpdated() {
-		this.createObserver()
+		// Ensure the carousel is at the start
 		this.carousel.scrollLeft = 0
+
+		// Set up RxJS observable for the scroll event
+		fromEvent(this.carousel, 'scroll')
+			.pipe(throttleTime(100)) // Throttle to improve performance
+			.subscribe(() => {
+				this.updateSelectedIndexOnScroll()
+			})
+
+		// After initial render, also run once to set the correct initial index
+		requestAnimationFrame(() => this.updateSelectedIndexOnScroll())
 	}
 
-	disconnectedCallback() {
-		super.disconnectedCallback()
-		if (this.observer) {
-			this.observer.disconnect()
-		}
+	private updateSelectedIndexOnScroll() {
+		const items = Array.from(this.carousel.querySelectorAll('.carousel-item')) as HTMLElement[]
+
+		if (!items.length) return
+
+		// The horizontal center of the carousel's visible area
+		const carouselCenter = this.carousel.scrollLeft + this.carousel.clientWidth / 2
+
+		// Determine which item is closest to the carousel center
+		let closestIndex = 0
+		let closestDistance = Infinity
+
+		items.forEach((item, index) => {
+			// The center of the item relative to the carousel
+			const itemStart = item.offsetLeft
+			const itemCenter = itemStart + item.offsetWidth / 2
+			const distance = Math.abs(carouselCenter - itemCenter)
+
+			if (distance < closestDistance) {
+				closestDistance = distance
+				closestIndex = index
+			}
+		})
+
+		this.selectedIndex = closestIndex
 	}
+
+	// No IntersectionObserver logic needed, so remove disconnectedCallback logic for that.
+
 	render() {
 		return html`
 			<div class="relative inset-0">
@@ -67,15 +76,14 @@ export default class SchmancyCarouselComponent extends $LitElement(
 					${repeat(
 						this.images ?? [],
 						i => i,
-						i =>
-							html`
-								<img
-									loading="lazy"
-									src="${i}"
-									alt="Product image"
-									class="h-[70vh] carousel-item aspect-[2/3] w-auto object-cover"
-								/>
-							`,
+						i => html`
+							<img
+								loading="lazy"
+								src="${i}"
+								alt="Product image"
+								class="h-[70vh] carousel-item aspect-[2/3] w-auto object-cover"
+							/>
+						`,
 					)}
 				</div>
 				<div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
