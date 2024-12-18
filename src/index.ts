@@ -5,13 +5,14 @@ import { customElement, query, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import { fromEvent, map, of, switchMap, take, tap, zip } from 'rxjs'
 // import ZolaApp from './app/app'
+import { FoldersDB } from '@db/folders.collection'
+import { ItemsDB } from '@db/items.collection'
 import '@lit-labs/virtualizer'
 import Admin from './admin/admin'
-import AppLanding from './landing/landing'
-import { $items } from './admin/items/context'
-import { ItemsDB } from '@db/items.collection'
-import { FoldersDB } from '@db/folders.collection'
 import { $folders } from './admin/folders/context'
+import { $items } from './admin/items/context'
+import AppLanding from './landing/landing'
+import './shared'
 @customElement('app-index')
 export class AppIndex extends $LitElement() {
 	@state() rehydrated = false

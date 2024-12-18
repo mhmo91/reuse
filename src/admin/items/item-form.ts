@@ -100,7 +100,7 @@ export default class ItemForm extends $LitElement() {
 	 */
 	private async resizeAllFiles(files: FileList): Promise<File[]> {
 		const resizePromises = Array.from(files).map(
-			file => resizeImage(file, 750, undefined, 'file', 0.8) as Promise<File>,
+			file => resizeImage(file, 750, undefined, 'file', 0.7) as Promise<File>,
 		)
 		return Promise.all(resizePromises)
 	}
