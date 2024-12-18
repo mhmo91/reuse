@@ -63,13 +63,20 @@ export default class ItemForm extends $LitElement() {
 		fileInput.accept = 'image/*'
 		fileInput.multiple = true
 
+		// Append to the shadowRoot or document.body to ensure it’s visible to Safari
+		this.shadowRoot?.appendChild(fileInput)
+
 		fileInput.onchange = async (event: Event) => {
 			const target = event.target as HTMLInputElement
 			const files = target.files
 			if (files && files.length > 0) {
 				await this.uploadPhotos(files)
 			}
+
+			// Remove the file input after use if desired
+			fileInput.remove()
 		}
+
 		fileInput.click()
 	}
 
@@ -349,28 +356,25 @@ export default class ItemForm extends $LitElement() {
 					${when(
 						this.item.images?.length,
 						() => html`
-							<div class="flex flex-wrap gap-2">
+							<schmancy-flex class="w-full" flow="row" gap="md">
 								${this.item.images.map(
 									imgUrl => html`
-										<schmancy-surface type="surface" elevation="2">
-											<schmancy-grid class="relative w-fit">
-												<img src="${imgUrl}" alt="Item Photo" class="max-w-52 h-auto" />
-												<schmancy-grid class="p-2" gap="md" flow="col">
-													<schmancy-icon-button variant="filled" @click=${() => this.moveImageToFront(imgUrl)}>
-														star
-													</schmancy-icon-button>
-													<schmancy-icon-button variant="filled" @click=${() => this.deleteImage(imgUrl)}>
-														delete
-													</schmancy-icon-button>
-												</schmancy-grid>
+										<schmancy-card class="relative w-full">
+											<img src="${imgUrl}" alt="Item Photo" class="max-w-52 h-auto" />
+											<schmancy-grid class="p-2" gap="md" flow="col">
+												<schmancy-icon-button variant="filled" @click=${() => this.moveImageToFront(imgUrl)}>
+													star
+												</schmancy-icon-button>
+												<schmancy-icon-button variant="filled" @click=${() => this.deleteImage(imgUrl)}>
+													delete
+												</schmancy-icon-button>
 											</schmancy-grid>
-										</schmancy-surface>
+										</schmancy-card>
 									`,
 								)}
-							</div>
+							</schmancy-flex>
 						`,
 					)}
-
 					<schmancy-divider></schmancy-divider>
 
 					<!-- Archive Checkbox -->
