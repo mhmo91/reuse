@@ -110,6 +110,8 @@ export class AppIndex extends $LitElement() {
 				)}
 				<schmancy-notification-outlet></schmancy-notification-outlet>
 			</schmancy-surface>
+			<!-- Add the floating WhatsApp button here -->
+			<whatsapp-float-button></whatsapp-float-button>
 		`
 	}
 }
