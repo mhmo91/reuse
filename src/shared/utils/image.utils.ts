@@ -4,8 +4,7 @@
  * @param maxWidth - (Optional) The maximum allowed width.
  * @param maxHeight - (Optional) The maximum allowed height.
  * @param outputType - The desired output format ('blob', 'dataurl', or 'file').
- * @param quality - A number between 0 and 1 indicating the image quality if the requested type is image/jpeg or image/webp.
- *                  A lower number means higher compression (smaller file size) but lower image quality.
+ * @param quality - A number between 0 and 1 indicating the image compression quality for 'image/jpeg'.
  * @returns A Promise that resolves to either a Blob, DataURL, or File representing the resized (or non-resized) image.
  */
 export function resizeImage(
@@ -18,13 +17,18 @@ export function resizeImage(
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader()
 		reader.onload = readerEvent => {
+			if (!readerEvent.target?.result) {
+				return reject(new Error('FileReader failed to load image'))
+			}
+
 			const img = new Image()
+			// Some older iOS Safari versions need this for cross-origin images:
+			// img.crossOrigin = 'anonymous';
 			img.onload = () => {
 				let { width, height } = img
 
-				// Resize logic depending on provided constraints
+				// Apply resizing if max dimensions are provided
 				if (maxWidth && maxHeight) {
-					// Both dimensions provided: Ensure we fit within both, maintaining aspect ratio
 					if (width > maxWidth) {
 						height = Math.floor((height * maxWidth) / width)
 						width = maxWidth
@@ -34,21 +38,18 @@ export function resizeImage(
 						height = maxHeight
 					}
 				} else if (maxWidth && !maxHeight) {
-					// Only maxWidth provided: scale down width if necessary
 					if (width > maxWidth) {
 						height = Math.floor((height * maxWidth) / width)
 						width = maxWidth
 					}
 				} else if (!maxWidth && maxHeight) {
-					// Only maxHeight provided: scale down height if necessary
 					if (height > maxHeight) {
 						width = Math.floor((width * maxHeight) / height)
 						height = maxHeight
 					}
 				}
-				// If neither maxWidth nor maxHeight is provided, no resizing occurs.
+				// If neither maxWidth nor maxHeight are provided, no resizing occurs.
 
-				// Create a canvas to draw the resized (or original) image
 				const canvas = document.createElement('canvas')
 				canvas.width = width
 				canvas.height = height
@@ -57,53 +58,45 @@ export function resizeImage(
 					return reject(new Error('Unable to get 2D context'))
 				}
 
-				// Draw the image onto the canvas at the new dimensions
 				ctx.drawImage(img, 0, 0, width, height)
 
-				// Function to handle Blob conversion
-				const handleBlob = (blob: Blob) => {
-					if (outputType === 'blob') {
-						resolve(blob)
-					} else if (outputType === 'dataurl') {
-						const reader = new FileReader()
-						reader.onloadend = () => {
-							if (reader.result) {
-								resolve(reader.result as string)
-							} else {
-								reject(new Error('Failed to convert Blob to DataURL'))
-							}
-						}
-						reader.onerror = () => {
-							reject(new Error('FileReader error during Blob to DataURL conversion'))
-						}
-						reader.readAsDataURL(blob)
-					} else if (outputType === 'file') {
-						try {
-							const file = new File([blob], imageFile.name, {
-								type: blob.type,
-								lastModified: imageFile.lastModified,
-							})
-							resolve(file)
-						} catch (error) {
-							// Fallback for browsers that do not support the File constructor
-							const fileObj: Partial<File> = {
-								name: imageFile.name,
-								lastModified: imageFile.lastModified,
-								size: blob.size,
-								type: blob.type,
-								// Add other properties or methods if needed
-							}
-							resolve(fileObj as File)
-						}
-					}
-				}
-
-				// Convert canvas to desired format with specified quality
 				canvas.toBlob(
 					blob => {
 						if (!blob) {
 							return reject(new Error('Canvas conversion to Blob failed.'))
 						}
+
+						const handleBlob = (blob: Blob) => {
+							if (outputType === 'blob') {
+								resolve(blob)
+							} else if (outputType === 'dataurl') {
+								const reader = new FileReader()
+								reader.onloadend = () => {
+									if (reader.result) {
+										resolve(reader.result as string)
+									} else {
+										reject(new Error('Failed to convert Blob to DataURL'))
+									}
+								}
+								reader.onerror = () => {
+									reject(new Error('FileReader error during Blob to DataURL conversion'))
+								}
+								reader.readAsDataURL(blob)
+							} else if (outputType === 'file') {
+								try {
+									// Attempt to create a File object
+									const file = new File([blob], imageFile.name, {
+										type: blob.type,
+										lastModified: imageFile.lastModified,
+									})
+									resolve(file)
+								} catch (error) {
+									// Fallback if File constructor is not supported
+									resolve(blob)
+								}
+							}
+						}
+
 						handleBlob(blob)
 					},
 					'image/jpeg',
@@ -111,19 +104,14 @@ export function resizeImage(
 				)
 			}
 
-			// Set the image source to the FileReader result
-			if (readerEvent.target?.result) {
-				img.src = readerEvent.target.result as string
-			} else {
-				reject(new Error('FileReader failed to load image'))
-			}
+			img.onerror = () => reject(new Error('Image failed to load'))
+			img.src = readerEvent.target.result as string
 		}
 
 		reader.onerror = () => {
 			reject(reader.error || new Error('FileReader error'))
 		}
 
-		// Start reading the image file
 		reader.readAsDataURL(imageFile)
 	})
 }

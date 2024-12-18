@@ -21,10 +21,8 @@ export class AppIndex extends $LitElement() {
 	async connectedCallback() {
 		super.connectedCallback()
 
-		$newSchmancyTheme.next({
-			color: 'grey',
-			scheme: 'auto',
-		})
+		// @ts-ignore
+		$newSchmancyTheme.next()
 
 		const query = new URLSearchParams(location.search)
 		if (query.has('admin')) {
