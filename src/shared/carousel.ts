@@ -31,7 +31,11 @@ export default class SchmancyCarouselComponent extends $LitElement(
 
 		// Set up RxJS observable for the scroll event
 		fromEvent(this.carousel, 'scroll')
-			.pipe(throttleTime(100)) // Throttle to improve performance
+			.pipe(
+				throttleTime(100, undefined, {
+					trailing: true,
+				}),
+			) // Throttle to improve performance
 			.subscribe(() => {
 				this.updateSelectedIndexOnScroll()
 			})

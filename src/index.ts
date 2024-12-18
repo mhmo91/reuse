@@ -1,5 +1,5 @@
 import { $LitElement } from '@mhmo91/lit-mixins/src'
-import { $notify, area, fullHeight } from '@mhmo91/schmancy'
+import { $newSchmancyTheme, $notify, area, fullHeight } from '@mhmo91/schmancy'
 import { html } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
@@ -20,6 +20,11 @@ export class AppIndex extends $LitElement() {
 
 	async connectedCallback() {
 		super.connectedCallback()
+
+		$newSchmancyTheme.next({
+			color: 'grey',
+			scheme: 'auto',
+		})
 
 		const query = new URLSearchParams(location.search)
 		if (query.has('admin')) {
