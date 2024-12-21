@@ -10,7 +10,7 @@ import { ItemsDB } from '@db/items.collection'
 import '@lit-labs/virtualizer'
 import Admin from './admin/admin'
 import { $folders } from './admin/folders/context'
-import { $items } from './admin/items/context'
+import { $items, $itemsFilter } from './admin/items/context'
 import AppLanding from './landing/landing'
 import './shared'
 @customElement('app-index')
@@ -46,6 +46,11 @@ export class AppIndex extends $LitElement() {
 			// this.init()
 		}
 
+		// reset itemsFilter
+		$itemsFilter.next({
+			filter: new Map(),
+			filterBy: ['folder'],
+		})
 		zip(
 			$folders.pipe(
 				take(1),
