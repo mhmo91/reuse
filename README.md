@@ -1,6 +1,6 @@
-# MO Template
+# Reuse Dahab
 
-A modern, opinionated starter template for building web applications and sites using:
+Tech Stack
 
 - **Lit**: For building fast, reusable Web Components.
 - **Vite**: For a lightning-fast development experience.
@@ -41,7 +41,7 @@ A modern, opinionated starter template for building web applications and sites u
 
 ## Demo
 
-Check out the live demo [here](#).
+Check out the live demo [here](https://reusedahab.netlify.app/).
 
 ---
 
@@ -59,13 +59,13 @@ Check out the live demo [here](#).
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/mhmo91/mo-template.git
+   git clone https://github.com/mhmo91/reuse.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd mo-template
+   cd reuse
    ```
 
 3. Install dependencies:
@@ -110,15 +110,12 @@ Using Yarn: `bash yarn build`
 
 The output will be in the dist directory.
 
-Project Structure
+## Project Structure
 
 ```
 ├── src
 │ ├── components
 │ │ └── my-component.ts
-│ ├── styles
-│ │ └── index.css
-│ ├── index.html
 │ └── main.ts
 ├── public
 │ └── assets
@@ -126,12 +123,11 @@ Project Structure
 ├── vite.config.ts
 ├── tsconfig.json
 ├── package.json
-└── README.md
+├── README.md
+└── index.md
 ```
 
     •	src/: Main source directory.
-    •	components/: Web Components built with Lit.
-    •	styles/: CSS styles using Tailwind CSS.
     •	index.html: Entry HTML file.
     •	main.ts: Entry TypeScript file.
     •	public/: Static assets.
@@ -150,17 +146,17 @@ Project Structure
 
 2. Add New Components
 
-Create new components in the src/components directory using Lit:
+Create new components in the src/ directory using Lit:
 
 ```ts
 import { LitElement, html, css, customElement } from 'lit'
 
 @customElement('my-new-component')
-export class MyNewComponent extends LitElement {
-	static styles = css`
+export class MyNewComponent extends $litElement(
+	css`
 		/* Your styles here */
-	`
-
+	`,
+) {
 	render() {
 		return html` <!-- Your template here -->`
 	}
@@ -169,7 +165,7 @@ export class MyNewComponent extends LitElement {
 
 3. Import Components
 
-Import your components in main.ts:
+Import your components in index.ts:
 
 ```ts
 import './components/my-new-component'

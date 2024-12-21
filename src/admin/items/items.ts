@@ -38,8 +38,9 @@ export default class Items extends $LitElement() {
 			})
 		this.fetchItems()
 
-		$items.subscribe({
-			next: () => {
+		$filteredItems.subscribe({
+			next: items => {
+				this.items = items
 				this.requestUpdate()
 			},
 		})
@@ -95,7 +96,7 @@ export default class Items extends $LitElement() {
 					</schmancy-grid>
 				</schmancy-nav-drawer-appbar>
 
-				<schmancy-grid gap="sm" class="max-h-[20vh] overflow-y-scroll">
+				<schmancy-grid gap="sm" class="overflow-y-scroll">
 					<!-- repeat all chips if any category is selected -->
 					${litMap(
 						FoldersTree.getFolderPath(this.foldersTree, $itemsFilter.value.filter.get('folder') ?? null),
@@ -124,7 +125,7 @@ export default class Items extends $LitElement() {
 				<!-- list of items -->
 				<schmancy-grid class="max-w-md mx-auto" gap="lg">
 					${repeat(
-						$items.value,
+						this.items,
 						i => i[1].id,
 						i => html`
 							<reuse-product
@@ -152,21 +153,5 @@ export default class Items extends $LitElement() {
 			...$itemsFilter.value,
 			filterBy: ['folder'],
 		})
-	}
-	handleSupplierChange(event: Event) {
-		const select = event.target as HTMLSelectElement
-		let selectedSupplier = select.value || null
-		if (!selectedSupplier) {
-			selectedSupplier = ''
-			$itemsFilter.value.filter.delete('supplier')
-		} else {
-			$itemsFilter.value.filter.clear()
-			$itemsFilter.value.filter.set('supplier', selectedSupplier)
-		}
-		$itemsFilter.next({
-			...$itemsFilter.value,
-			filterBy: ['supplier'],
-		})
-		this.requestUpdate()
 	}
 }
